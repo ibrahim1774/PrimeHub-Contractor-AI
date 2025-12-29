@@ -26,21 +26,17 @@ export const useWebsiteGenerator = () => {
 
   useEffect(() => {
     if (isGenerating) {
-      // Smooth progress increments with no large jumps
       progressTimer.current = window.setInterval(() => {
         setProgress(prev => {
           if (prev < targetProgress.current) {
-            // Move 5% of the remaining distance to target for smooth decelerating approach
             const step = (targetProgress.current - prev) * 0.05;
             return Math.min(prev + Math.max(0.05, step), 100);
           }
-          // Slow background crawl when waiting for API
           if (prev < 99.5) return prev + 0.03;
           return prev;
         });
       }, 60);
 
-      // Rotate messages every 2.5 seconds (within the requested 2-3s range)
       let msgIdx = 0;
       setStatusMessage(LOADING_MESSAGES[0]);
       messageInterval.current = window.setInterval(() => {
@@ -58,15 +54,17 @@ export const useWebsiteGenerator = () => {
   }, [isGenerating]);
 
   const generateWebsite = useCallback(async (formData: FormData) => {
+    console.log("[Generator] Initiating synthesis sequence...");
     setIsGenerating(true);
     setProgress(0);
-    targetProgress.current = 12; // Start
+    targetProgress.current = 10;
     setError(null);
     setGeneratedData(null);
     setGeneratedImages(null);
 
     try {
-      targetProgress.current = 28;
+      console.log("[Generator] Step 1: Requesting Content Generation");
+      targetProgress.current = 20;
       const content = await generateWebsiteContent(
         formData.industry, 
         formData.companyName, 
@@ -75,7 +73,10 @@ export const useWebsiteGenerator = () => {
         formData.brandColor
       );
       setGeneratedData(content);
-      targetProgress.current = 55;
+      console.log("[Generator] Step 1 Complete: Content Generated");
+      
+      console.log("[Generator] Step 2: Requesting Asset Generation (Images)");
+      targetProgress.current = 50;
 
       const [heroImg, valueImg, credImg] = await Promise.all([
         generateImage(
@@ -97,15 +98,18 @@ export const useWebsiteGenerator = () => {
         industryValue: valueImg,
         credentialsShowcase: credImg,
       });
+      console.log("[Generator] Step 2 Complete: Assets Generated");
 
       targetProgress.current = 100;
-      // Allow user to see 100% for a brief moment
       await new Promise(resolve => setTimeout(resolve, 800));
       setIsGenerating(false);
+      console.log("[Generator] Synthesis sequence finished successfully.");
       
     } catch (err: any) {
-      console.error("Generation error:", err);
-      setError("An error occurred during synthesis. Please re-initiate the request.");
+      console.error("[Generator Error]:", err);
+      // Surface actual error message if it's readable, else fallback
+      const readableError = err.message || "An unexpected synthesis error occurred.";
+      setError(readableError);
       setIsGenerating(false);
     }
   }, []);
