@@ -2,11 +2,14 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { GeneratedWebsite } from "../types";
 
 const getAI = () => {
-  const apiKey = process.env.API_KEY;
+  // Prioritize GEMINI_API_KEY for Vercel production, fallback to API_KEY for Studio/Local
+  const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
+  
   if (!apiKey) {
-    console.error("CRITICAL: API_KEY environment variable is missing.");
-    throw new Error("Server configuration missing required key (API_KEY).");
+    console.error("CRITICAL: Gemini API key is missing from environment variables.");
+    throw new Error("Missing server env var. Set GEMINI_API_KEY (or API_KEY) in Vercel for Production.");
   }
+  
   return new GoogleGenAI({ apiKey });
 };
 
