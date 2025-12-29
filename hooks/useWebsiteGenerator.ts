@@ -67,8 +67,10 @@ export const useWebsiteGenerator = () => {
       await new Promise(resolve => setTimeout(resolve, 800));
       
     } catch (err: any) {
-      console.error(err);
-      setError("Failed to generate website. Please try again.");
+      console.error("Website Generation Failed:", err);
+      // Log more details if available
+      if (err.message) console.error("Error details:", err.message);
+      setError(`Failed to generate website: ${err.message || 'Unknown error'}. Please check your API configuration.`);
     } finally {
       setIsGenerating(false);
     }
