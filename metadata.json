@@ -1,0 +1,8 @@
+{
+  "name": "PrimeHub AI",
+  "description": "High-conversion landing page generator for home service contractors using the Roto-Rooter design template.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
