@@ -27,15 +27,18 @@ export default async function handler(req: any, res: any) {
                     price_data: {
                         currency: 'usd',
                         product_data: {
-                            name: `Website Claim: ${companyName}`,
-                            description: 'Professional contractor website generation and hosting setup.',
+                            name: `${companyName} - Premium Subscription`,
+                            description: '$20/month for website hosting and AI management.',
                         },
-                        unit_amount: 4900, // $49.00 - Adjust as needed
+                        unit_amount: 2000, // $20.00
+                        recurring: {
+                            interval: 'month',
+                        },
                     },
                     quantity: 1,
                 },
             ],
-            mode: 'payment',
+            mode: 'subscription',
             metadata: {
                 pendingId,
                 companyName,
