@@ -342,13 +342,18 @@ const PreviewSite: React.FC<PreviewSiteProps> = ({ data, images, onExit }) => {
         )}
 
         {!isClaiming && !deployedUrl && (
-          <button
-            onClick={handleClaimSite}
-            className="bg-black hover:bg-gray-900 text-white font-bold text-lg px-8 py-4 rounded-full shadow-2xl transition-all hover:scale-105 active:scale-95 flex items-center gap-3 border-4 border-white"
-          >
-            <span>🚀</span>
-            CLAIM THIS SITE
-          </button>
+          <div className="flex flex-col items-end gap-2">
+            <button
+              onClick={handleClaimSite}
+              className="bg-black hover:bg-gray-900 text-white font-bold text-lg px-8 py-4 rounded-full shadow-2xl transition-all hover:scale-105 active:scale-95 flex items-center gap-3 border-4 border-white"
+            >
+              <span>🚀</span>
+              CLAIM THIS SITE
+            </button>
+            <p className="text-black font-bold text-xs bg-white/90 px-3 py-1 rounded-full shadow-sm border border-gray-100 italic">
+              $20/month for hosting & maintenance
+            </p>
+          </div>
         )}
 
         {deployedUrl && (
