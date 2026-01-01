@@ -351,7 +351,7 @@ const PreviewSite: React.FC<PreviewSiteProps> = ({ data, images, onExit }) => {
               CLAIM THIS SITE
             </button>
             <p className="text-black font-bold text-xs bg-white/90 px-3 py-1 rounded-full shadow-sm border border-gray-100 italic">
-              $20/month for hosting & maintenance
+              $20/mo hosting. PrimeHub handles all image and text edits and design finalization.
             </p>
           </div>
         )}
