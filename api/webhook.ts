@@ -41,25 +41,36 @@ export default async function handler(req: any, res: any) {
         const pendingId = session.metadata?.pendingId;
         const companyName = session.metadata?.companyName || 'site';
 
-        if (pendingId) {
-            console.log(`Processing payment for site: ${pendingId}`);
+        console.log(`[Webhook] Payment confirmed for: ${companyName} (Pending ID: ${pendingId})`);
 
+        if (pendingId) {
             try {
                 // 1. Fetch HTML from GCS
-                const credentials = JSON.parse(process.env.GCS_CREDENTIALS as string);
+                console.log(`[Webhook] Fetching HTML from GCS: pending/html/${pendingId}.html`);
+                const credentialsJson = process.env.GCS_CREDENTIALS;
+                const bucketName = process.env.GCS_BUCKET_NAME;
+
+                if (!credentialsJson || !bucketName) {
+                    throw new Error('GCS_CREDENTIALS or GCS_BUCKET_NAME missing in environment');
+                }
+
+                const credentials = JSON.parse(credentialsJson);
                 const storage = new Storage({
                     projectId: credentials.project_id,
                     credentials,
                 });
-                const bucket = storage.bucket(process.env.GCS_BUCKET_NAME as string);
+                const bucket = storage.bucket(bucketName);
                 const file = bucket.file(`pending/html/${pendingId}.html`);
 
                 const [htmlBuffer] = await file.download();
                 const html = htmlBuffer.toString();
+                console.log(`[Webhook] Successfully downloaded HTML (${html.length} bytes)`);
 
                 // 2. Deploy to Vercel
                 const teamId = process.env.VERCEL_TEAM_ID;
                 const token = process.env.VERCEL_TOKEN;
+
+                console.log(`[Webhook] Initiating Vercel Deployment for team: ${teamId || 'N/A'}`);
 
                 // Helper to create a valid Vercel project name (slug)
                 const slugify = (text: string) => {
@@ -67,14 +78,15 @@ export default async function handler(req: any, res: any) {
                         .toString()
                         .toLowerCase()
                         .trim()
-                        .replace(/\s+/g, '-')     // Replace spaces with -
-                        .replace(/[^\w-]+/g, '')  // Remove all non-word chars
-                        .replace(/--+/g, '-')     // Replace multiple - with single -
-                        .replace(/^-+/, '')       // Trim - from start of text
-                        .replace(/-+$/, '');      // Trim - from end of text
+                        .replace(/\s+/g, '-')
+                        .replace(/[^\w-]+/g, '')
+                        .replace(/--+/g, '-')
+                        .replace(/^-+/, '')
+                        .replace(/-+$/, '');
                 };
 
                 const uniqueProjectName = `${slugify(companyName)}-${Math.random().toString(36).substring(2, 6)}`;
+                console.log(`[Webhook] Target Project: ${uniqueProjectName}`);
 
                 const payload = {
                     name: uniqueProjectName,
@@ -92,20 +104,23 @@ export default async function handler(req: any, res: any) {
                     body: JSON.stringify(payload),
                 });
 
+                const deployData = await deployRes.json();
+
                 if (!deployRes.ok) {
-                    throw new Error(`Vercel Deploy Error: ${await deployRes.text()}`);
+                    console.error(`[Webhook] Vercel Deploy Error Detail:`, JSON.stringify(deployData));
+                    throw new Error(`Vercel API Error: ${deployData.error?.message || 'Unknown error'}`);
                 }
 
-                const deployData = await deployRes.json();
-                console.log(`Successfully deployed site for ${companyName} at: https://${deployData.url}`);
+                console.log(`[Webhook] SUCCESS! Deployed at: https://${deployData.url}`);
 
                 // Optional: Cleanup the pending HTML file
                 // await file.delete();
 
             } catch (deployErr: any) {
-                console.error(`Deployment failed after payment: ${deployErr.message}`);
-                // We might want to notify the admin here
+                console.error(`[Webhook] CRITICAL ERROR: ${deployErr.message}`);
             }
+        } else {
+            console.error(`[Webhook] ERROR: No pendingId found in session metadata.`);
         }
     }
 
