@@ -60,10 +60,24 @@ export default async function handler(req: any, res: any) {
                 // 2. Deploy to Vercel
                 const teamId = process.env.VERCEL_TEAM_ID;
                 const token = process.env.VERCEL_TOKEN;
-                const projectName = process.env.PROJECT_NAME || 'primehub-sites';
+
+                // Helper to create a valid Vercel project name (slug)
+                const slugify = (text: string) => {
+                    return text
+                        .toString()
+                        .toLowerCase()
+                        .trim()
+                        .replace(/\s+/g, '-')     // Replace spaces with -
+                        .replace(/[^\w-]+/g, '')  // Remove all non-word chars
+                        .replace(/--+/g, '-')     // Replace multiple - with single -
+                        .replace(/^-+/, '')       // Trim - from start of text
+                        .replace(/-+$/, '');      // Trim - from end of text
+                };
+
+                const uniqueProjectName = `${slugify(companyName)}-${Math.random().toString(36).substring(2, 6)}`;
 
                 const payload = {
-                    name: projectName,
+                    name: uniqueProjectName,
                     files: [{ file: 'index.html', data: html }],
                     projectSettings: { framework: null },
                     target: 'production',
@@ -82,7 +96,8 @@ export default async function handler(req: any, res: any) {
                     throw new Error(`Vercel Deploy Error: ${await deployRes.text()}`);
                 }
 
-                console.log(`Successfully deployed site for ${companyName}`);
+                const deployData = await deployRes.json();
+                console.log(`Successfully deployed site for ${companyName} at: https://${deployData.url}`);
 
                 // Optional: Cleanup the pending HTML file
                 // await file.delete();
