@@ -27,6 +27,10 @@ const SuccessPage: React.FC<SuccessPageProps> = ({ pendingId, companyName }) => 
                 }
 
                 const data = await response.json();
+
+                // Wait 8 seconds for DNS propagation
+                await new Promise(resolve => setTimeout(resolve, 8000));
+
                 setDeployedUrl(`https://${data.url}`);
                 setStatus('success');
             } catch (err: any) {
