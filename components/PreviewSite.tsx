@@ -166,18 +166,44 @@ const PreviewSite: React.FC<PreviewSiteProps> = ({ data: initialData, images: in
       const imageKeys = Object.keys(images) as Array<keyof GeneratedImages>;
 
       for (const key of imageKeys) {
-        const base64 = images[key];
-        if (base64?.startsWith('data:')) {
-          const filename = `pending/assets/${data.companyName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${key}_${Date.now()}.png`;
-          const uploadRes = await fetch('/api/upload', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ image: base64, filename })
-          });
+        const value = images[key];
 
-          if (!uploadRes.ok) throw new Error(`Failed to upload ${key}`);
-          const { url } = await uploadRes.json();
-          uploadedImages[key] = url;
+        // Handle ourWorkImages array separately
+        if (key === 'ourWorkImages' && Array.isArray(value)) {
+          const uploadedArray: (string | null)[] = [];
+          for (let i = 0; i < value.length; i++) {
+            const base64 = value[i];
+            if (base64 && typeof base64 === 'string' && base64.startsWith('data:')) {
+              const filename = `pending/assets/${data.companyName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_ourwork_${i}_${Date.now()}.png`;
+              const uploadRes = await fetch('/api/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: base64, filename })
+              });
+
+              if (!uploadRes.ok) throw new Error(`Failed to upload ourWork image ${i}`);
+              const { url } = await uploadRes.json();
+              uploadedArray.push(url);
+            } else {
+              uploadedArray.push(base64);
+            }
+          }
+          uploadedImages[key] = uploadedArray;
+        } else {
+          // Handle regular string images
+          const base64 = value as string;
+          if (base64?.startsWith('data:')) {
+            const filename = `pending/assets/${data.companyName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${key}_${Date.now()}.png`;
+            const uploadRes = await fetch('/api/upload', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ image: base64, filename })
+            });
+
+            if (!uploadRes.ok) throw new Error(`Failed to upload ${key}`);
+            const { url } = await uploadRes.json();
+            uploadedImages[key] = url;
+          }
         }
       }
 
