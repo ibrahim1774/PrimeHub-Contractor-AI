@@ -10,6 +10,7 @@ import Process from './sections/Process';
 import FAQ from './sections/FAQ';
 import EmergencyCTA from './sections/EmergencyCTA';
 import Credentials from './sections/Credentials';
+import OurWork from './sections/OurWork';
 import OfferPopup from './sections/OfferPopup';
 import EditableText from './EditableText';
 import Icon from './Icon';
@@ -112,6 +113,12 @@ const SiteContent: React.FC<{ data: GeneratedWebsite; images: GeneratedImages }>
           brandColor={data.brandColor}
           industry={data.industry}
           location={data.location}
+        />
+
+        <OurWork
+          data={data.ourWork}
+          images={images.ourWorkImages}
+          brandColor={data.brandColor}
         />
 
         <FAQ faqs={data.faqs} brandColor={data.brandColor} />
@@ -361,6 +368,14 @@ const PreviewSite: React.FC<PreviewSiteProps> = ({ data: initialData, images: in
           location={data.location}
           onUpdateData={(d) => updateData({ credentials: { ...data.credentials, ...d } })}
           onUpdateImage={(v) => setImages(prev => ({ ...prev, credentialsShowcase: v }))}
+        />
+
+        <OurWork
+          data={data.ourWork}
+          images={images.ourWorkImages}
+          brandColor={data.brandColor}
+          onUpdateData={(d) => updateData({ ourWork: { ...data.ourWork, ...d } })}
+          onUpdateImages={(v) => setImages(prev => ({ ...prev, ourWorkImages: v }))}
         />
 
         <FAQ

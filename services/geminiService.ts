@@ -5,12 +5,12 @@ import { GeneratedWebsite } from "../types";
 const getAI = () => {
   // Prioritize GEMINI_API_KEY for Vercel production, fallback to API_KEY for Studio/Local
   const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
-  
+
   if (!apiKey) {
     console.error("CRITICAL: Gemini API key is missing from environment variables.");
     throw new Error("Missing server env var. Set GEMINI_API_KEY (or API_KEY) in Vercel for Production.");
   }
-  
+
   return new GoogleGenAI({ apiKey });
 };
 
@@ -33,7 +33,7 @@ const parseModelResponse = (text: string) => {
 
 export const generateWebsiteContent = async (industry: string, companyName: string, location: string, phone: string, brandColor: string): Promise<GeneratedWebsite> => {
   console.log(`[Synthesis] Starting content generation for: ${companyName} (${industry})`);
-  
+
   const ai = getAI();
   const prompt = `Act as a senior conversion-focused copywriter for ${industry}. 
   Generate website content JSON for "${companyName}" in ${location}. Phone: ${phone}.
@@ -46,7 +46,8 @@ export const generateWebsiteContent = async (industry: string, companyName: stri
   5. Mention "${companyName}" exactly 3-4 times total across the page.
   6. Industry Value: Explain why ${industry} is critical for ${location} property owners.
   7. Generate 4-5 FAQ items that are "universal common sense" for the ${industry} industry. These should be widely applicable questions about service quality, response times, estimates, and licensing.
-  8. Provide 4 unique CTA variations. 
+  8. Our Work Section: Generate title as "Our Work" and subtitle as "Upload real photos of your completed home service projects. These images help customers trust your work."
+  9. Provide 4 unique CTA variations. 
      CRITICAL: DO NOT include the phone number ${phone} in these text strings. 
      Only provide the action phrase (e.g., "Request a Quote", "Get an Estimate", "Speak With Our Team", "Call & Text").
      The application will append the phone number to these phrases automatically.
@@ -140,10 +141,10 @@ export const generateWebsiteContent = async (industry: string, companyName: stri
             },
             benefits: {
               type: Type.OBJECT,
-              properties: { 
-                title: { type: Type.STRING }, 
+              properties: {
+                title: { type: Type.STRING },
                 intro: { type: Type.STRING },
-                items: { type: Type.ARRAY, items: { type: Type.STRING }, minItems: 5, maxItems: 6 } 
+                items: { type: Type.ARRAY, items: { type: Type.STRING }, minItems: 5, maxItems: 6 }
               },
               required: ["title", "intro", "items"]
             },
@@ -177,6 +178,14 @@ export const generateWebsiteContent = async (industry: string, companyName: stri
               minItems: 4,
               maxItems: 5
             },
+            ourWork: {
+              type: Type.OBJECT,
+              properties: {
+                title: { type: Type.STRING },
+                subtitle: { type: Type.STRING }
+              },
+              required: ["title", "subtitle"]
+            },
             emergencyCTA: {
               type: Type.OBJECT,
               properties: { headline: { type: Type.STRING }, subtext: { type: Type.STRING }, buttonText: { type: Type.STRING } },
@@ -204,7 +213,7 @@ export const generateWebsiteContent = async (industry: string, companyName: stri
               required: ["requestQuote", "getEstimate", "speakWithTeam", "callAndText"]
             }
           },
-          required: ["companyName", "brandColor", "industry", "location", "phone", "hero", "services", "industryValue", "featureHighlight", "benefits", "processSteps", "faqs", "emergencyCTA", "credentials", "ctaVariations"]
+          required: ["companyName", "brandColor", "industry", "location", "phone", "hero", "services", "industryValue", "featureHighlight", "benefits", "processSteps", "ourWork", "faqs", "emergencyCTA", "credentials", "ctaVariations"]
         }
       }
     });
@@ -220,14 +229,14 @@ export const generateWebsiteContent = async (industry: string, companyName: stri
 export const generateImage = async (prompt: string, aspectRatio: "1:1" | "16:9" | "3:4" | "4:3" | "9:16" = "1:1"): Promise<string> => {
   console.log(`[Synthesis] Requesting image for prompt: ${prompt.substring(0, 50)}...`);
   const ai = getAI();
-  
+
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
-      contents: { 
-        parts: [{ 
-          text: `${prompt}. Photorealistic commercial photography. Show real workers on site using safety gear. Natural lighting, candid but professional, NO text overlays.` 
-        }] 
+      contents: {
+        parts: [{
+          text: `${prompt}. Photorealistic commercial photography. Show real workers on site using safety gear. Natural lighting, candid but professional, NO text overlays.`
+        }]
       },
       config: { imageConfig: { aspectRatio } },
     });

@@ -9,7 +9,7 @@ export interface GeneratedWebsite {
     badge: string;
     headline: {
       line1: string;
-      line2: string; 
+      line2: string;
       line3: string;
     };
     subtext: string;
@@ -58,6 +58,10 @@ export interface GeneratedWebsite {
       icon: string;
     }>;
   };
+  ourWork: {
+    title: string;
+    subtitle: string;
+  };
   faqs: Array<{
     question: string;
     answer: string;
@@ -86,6 +90,7 @@ export interface GeneratedImages {
   heroBackground: string;
   industryValue: string;
   credentialsShowcase: string;
+  ourWorkImages: [string | null, string | null, string | null, string | null];
 }
 
 export interface FormData {

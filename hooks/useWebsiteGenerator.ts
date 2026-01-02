@@ -19,7 +19,7 @@ export const useWebsiteGenerator = () => {
   const [generatedData, setGeneratedData] = useState<GeneratedWebsite | null>(null);
   const [generatedImages, setGeneratedImages] = useState<GeneratedImages | null>(null);
   const [error, setError] = useState<string | null>(null);
-  
+
   const targetProgress = useRef(0);
   const progressTimer = useRef<number | null>(null);
   const messageInterval = useRef<number | null>(null);
@@ -66,15 +66,15 @@ export const useWebsiteGenerator = () => {
       console.log("[Generator] Step 1: Requesting Content Generation");
       targetProgress.current = 20;
       const content = await generateWebsiteContent(
-        formData.industry, 
-        formData.companyName, 
-        formData.serviceArea, 
-        formData.phone, 
+        formData.industry,
+        formData.companyName,
+        formData.serviceArea,
+        formData.phone,
         formData.brandColor
       );
       setGeneratedData(content);
       console.log("[Generator] Step 1 Complete: Content Generated");
-      
+
       console.log("[Generator] Step 2: Requesting Asset Generation (Images)");
       targetProgress.current = 50;
 
@@ -92,11 +92,12 @@ export const useWebsiteGenerator = () => {
           "16:9"
         )
       ]);
-      
+
       setGeneratedImages({
         heroBackground: heroImg,
         industryValue: valueImg,
         credentialsShowcase: credImg,
+        ourWorkImages: [null, null, null, null],
       });
       console.log("[Generator] Step 2 Complete: Assets Generated");
 
@@ -104,7 +105,7 @@ export const useWebsiteGenerator = () => {
       await new Promise(resolve => setTimeout(resolve, 800));
       setIsGenerating(false);
       console.log("[Generator] Synthesis sequence finished successfully.");
-      
+
     } catch (err: any) {
       console.error("[Generator Error]:", err);
       // Surface actual error message if it's readable, else fallback
