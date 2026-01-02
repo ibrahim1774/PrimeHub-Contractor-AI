@@ -8,8 +8,8 @@ interface IndustryValueProps {
   image: string;
   brandColor: string;
   companyName: string;
-  onUpdateData: (newData: Partial<GeneratedWebsite['industryValue']>) => void;
-  onUpdateImage: (newBase64: string) => void;
+  onUpdateData?: (newData: Partial<GeneratedWebsite['industryValue']>) => void;
+  onUpdateImage?: (newBase64: string) => void;
 }
 
 const IndustryValue: React.FC<IndustryValueProps> = ({ data, image, brandColor, companyName, onUpdateData, onUpdateImage }) => {
@@ -39,21 +39,21 @@ const IndustryValue: React.FC<IndustryValueProps> = ({ data, image, brandColor, 
               <div className="text-gray-700 text-lg leading-relaxed font-bold max-sm:text-base">
                 <EditableText
                   value={data.title}
-                  onChange={(v) => onUpdateData({ title: v })}
+                  onChange={onUpdateData ? (v) => onUpdateData({ title: v }) : undefined}
                   multiline
                 />
               </div>
               <div className="text-gray-600 text-lg leading-relaxed max-sm:text-base">
                 <EditableText
                   value={data.content}
-                  onChange={(v) => onUpdateData({ content: v })}
+                  onChange={onUpdateData ? (v) => onUpdateData({ content: v }) : undefined}
                   multiline
                 />
               </div>
               <div className="text-gray-500 italic text-base leading-relaxed border-l-4 pl-6" style={{ borderColor: brandColor }}>
                 <EditableText
                   value={data.subtext}
-                  onChange={(v) => onUpdateData({ subtext: v })}
+                  onChange={onUpdateData ? (v) => onUpdateData({ subtext: v }) : undefined}
                   multiline
                 />
               </div>

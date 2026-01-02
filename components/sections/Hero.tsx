@@ -11,8 +11,8 @@ interface HeroProps {
   location: string;
   phone: string;
   ctaText: string;
-  onUpdateData: (newData: Partial<GeneratedWebsite['hero']>) => void;
-  onUpdateImage: (newBase64: string) => void;
+  onUpdateData?: (newData: Partial<GeneratedWebsite['hero']>) => void;
+  onUpdateImage?: (newBase64: string) => void;
 }
 
 const Hero: React.FC<HeroProps> = ({ data, image, brandColor, location, phone, ctaText, onUpdateData, onUpdateImage }) => {
@@ -43,19 +43,19 @@ const Hero: React.FC<HeroProps> = ({ data, image, brandColor, location, phone, c
             <span className="block">
               <EditableText
                 value={data.headline.line1}
-                onChange={(v) => onUpdateData({ headline: { ...data.headline, line1: v } })}
+                onChange={onUpdateData ? (v) => onUpdateData({ headline: { ...data.headline, line1: v } }) : undefined}
               />
             </span>
             <span style={{ color: brandColor }} className="block brightness-125">
               <EditableText
                 value={data.headline.line2}
-                onChange={(v) => onUpdateData({ headline: { ...data.headline, line2: v } })}
+                onChange={onUpdateData ? (v) => onUpdateData({ headline: { ...data.headline, line2: v } }) : undefined}
               />
             </span>
             <span className="block">
               <EditableText
                 value={data.headline.line3}
-                onChange={(v) => onUpdateData({ headline: { ...data.headline, line3: v } })}
+                onChange={onUpdateData ? (v) => onUpdateData({ headline: { ...data.headline, line3: v } }) : undefined}
               />
             </span>
           </h1>
@@ -63,7 +63,7 @@ const Hero: React.FC<HeroProps> = ({ data, image, brandColor, location, phone, c
           <div className="text-white/90 text-lg md:text-xl max-w-xl mb-12 leading-relaxed max-sm:text-base max-sm:mb-8 font-medium">
             <EditableText
               value={data.subtext}
-              onChange={(v) => onUpdateData({ subtext: v })}
+              onChange={onUpdateData ? (v) => onUpdateData({ subtext: v }) : undefined}
               multiline
             />
           </div>
@@ -88,21 +88,21 @@ const Hero: React.FC<HeroProps> = ({ data, image, brandColor, location, phone, c
                   <div className="text-white font-black uppercase text-[11px] tracking-widest leading-tight mb-0.5">
                     <EditableText
                       value={item.label}
-                      onChange={(v) => {
+                      onChange={onUpdateData ? (v) => {
                         const next = [...data.trustIndicators];
                         next[idx] = { ...item, label: v };
                         onUpdateData({ trustIndicators: next });
-                      }}
+                      } : undefined}
                     />
                   </div>
                   <div className="text-white/60 text-[10px] font-bold uppercase tracking-tight">
                     <EditableText
                       value={item.sublabel}
-                      onChange={(v) => {
+                      onChange={onUpdateData ? (v) => {
                         const next = [...data.trustIndicators];
                         next[idx] = { ...item, sublabel: v };
                         onUpdateData({ trustIndicators: next });
-                      }}
+                      } : undefined}
                     />
                   </div>
                 </div>

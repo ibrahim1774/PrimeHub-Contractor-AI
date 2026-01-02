@@ -6,7 +6,7 @@ import EditableText from '../EditableText';
 interface FeatureProps {
   data: GeneratedWebsite['featureHighlight'];
   brandColor: string;
-  onUpdateData: (newData: Partial<GeneratedWebsite['featureHighlight']>) => void;
+  onUpdateData?: (newData: Partial<GeneratedWebsite['featureHighlight']>) => void;
 }
 
 const Feature: React.FC<FeatureProps> = ({ data, brandColor, onUpdateData }) => {
@@ -17,13 +17,13 @@ const Feature: React.FC<FeatureProps> = ({ data, brandColor, onUpdateData }) => 
           <span style={{ color: brandColor }} className="font-bold text-[10px] tracking-[0.4em] uppercase mb-4 block">
             <EditableText
               value={data.badge}
-              onChange={(v) => onUpdateData({ badge: v })}
+              onChange={onUpdateData ? (v) => onUpdateData({ badge: v }) : undefined}
             />
           </span>
           <h2 className="text-[#1A1D2E] text-4xl font-extrabold leading-tight max-w-3xl mx-auto max-sm:text-2xl">
             <EditableText
               value={data.headline}
-              onChange={(v) => onUpdateData({ headline: v })}
+              onChange={onUpdateData ? (v) => onUpdateData({ headline: v }) : undefined}
               multiline
             />
           </h2>
@@ -38,21 +38,21 @@ const Feature: React.FC<FeatureProps> = ({ data, brandColor, onUpdateData }) => 
               <h3 className="text-xl font-bold mb-3 text-[#1A1D2E] max-sm:text-lg leading-tight">
                 <EditableText
                   value={card.title}
-                  onChange={(v) => {
+                  onChange={onUpdateData ? (v) => {
                     const next = [...data.cards];
                     next[idx] = { ...card, title: v };
                     onUpdateData({ cards: next });
-                  }}
+                  } : undefined}
                 />
               </h3>
               <div className="text-gray-600 text-sm leading-relaxed font-medium opacity-80">
                 <EditableText
                   value={card.description}
-                  onChange={(v) => {
+                  onChange={onUpdateData ? (v) => {
                     const next = [...data.cards];
                     next[idx] = { ...card, description: v };
                     onUpdateData({ cards: next });
-                  }}
+                  } : undefined}
                   multiline
                 />
               </div>

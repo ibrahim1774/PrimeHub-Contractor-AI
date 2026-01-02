@@ -5,7 +5,7 @@ import EditableText from '../EditableText';
 interface FAQProps {
   faqs: Array<{ question: string; answer: string }>;
   brandColor: string;
-  onUpdateData: (newFaqs: Array<{ question: string; answer: string }>) => void;
+  onUpdateData?: (newFaqs: Array<{ question: string; answer: string }>) => void;
 }
 
 const FAQItem: React.FC<{
@@ -65,16 +65,16 @@ const FAQ: React.FC<FAQProps> = ({ faqs, brandColor, onUpdateData }) => {
               question={faq.question}
               answer={faq.answer}
               brandColor={brandColor}
-              onUpdateQuestion={(v) => {
+              onUpdateQuestion={onUpdateData ? (v) => {
                 const next = [...faqs];
                 next[idx] = { ...faq, question: v };
                 onUpdateData(next);
-              }}
-              onUpdateAnswer={(v) => {
+              } : undefined}
+              onUpdateAnswer={onUpdateData ? (v) => {
                 const next = [...faqs];
                 next[idx] = { ...faq, answer: v };
                 onUpdateData(next);
-              }}
+              } : undefined}
             />
           ))}
         </div>

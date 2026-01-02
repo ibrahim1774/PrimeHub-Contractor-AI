@@ -284,11 +284,42 @@ const PreviewSite: React.FC<PreviewSiteProps> = ({ data: initialData, images: in
 
       const pendingId = `site_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
+      // 3. HARDENING: Sanitization pass to ensure 100% static output
+      const sanitizedHtml = finalHtml
+        .replace(/contenteditable="true"/g, '')
+        .replace(/contenteditable/g, '')
+        .replace(/suppresscontenteditablewarning="true"/g, '')
+        .replace(/suppresscontenteditablewarning/g, '')
+        // Remove ANY React-injected data attributes (e.g., data-reactroot, data-reactid)
+        // Keep ONLY the manual ones for FAQ logic
+        .replace(/\sdata-[a-zA-Z0-9-]+="[^"]*"/g, (match) => {
+          if (match.includes('data-faq-toggle') || match.includes('data-faq-content') || match.includes('data-brand-color')) {
+            return match;
+          }
+          return '';
+        })
+        // Remove all React event handlers (onBlur, onClick, etc) if they somehow leaked
+        .replace(/\son[a-zA-Z]+="[^"]*"/g, '')
+        // Remove specific editor CSS fragments that might have leaked into class strings
+        .replace(/hover:bg-black\/5/g, '')
+        .replace(/focus:ring-2/g, '')
+        .replace(/focus:ring-blue-400/g, '')
+        .replace(/focus:ring-opacity-50/g, '')
+        .replace(/cursor-pointer/g, (match, offset, fullString) => {
+          // Keep cursor-pointer for links and FAQ toggles, remove for everything else? 
+          // Actually, better to just let it be or just remove from non-interactive elements.
+          // For now, let's keep it simple and just remove known editor styling.
+          return match;
+        })
+        // Ensure no hidden inputs or other builder UI leaked
+        .replace(/<input[^>]*type="file"[^>]*>/g, '')
+        .replace(/<button[^>]*class="[^"]*camera-icon[^"]*"[^>]*>.*?<\/button>/g, '');
+
       const syncRes = await fetch('/api/upload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          image: btoa(unescape(encodeURIComponent(finalHtml))), // Safe UTF-8 base64
+          image: btoa(unescape(encodeURIComponent(sanitizedHtml))), // Safe UTF-8 base64
           filename: `pending/html/${pendingId}.html`
         })
       });

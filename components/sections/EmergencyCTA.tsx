@@ -8,7 +8,7 @@ interface EmergencyCTAProps {
   brandColor: string;
   phone: string;
   ctaText: string;
-  onUpdateData: (newData: Partial<GeneratedWebsite['emergencyCTA']>) => void;
+  onUpdateData?: (newData: Partial<GeneratedWebsite['emergencyCTA']>) => void;
 }
 
 const EmergencyCTA: React.FC<EmergencyCTAProps> = ({ data, brandColor, phone, ctaText, onUpdateData }) => {
@@ -23,14 +23,14 @@ const EmergencyCTA: React.FC<EmergencyCTAProps> = ({ data, brandColor, phone, ct
         <h2 className="text-3xl md:text-5xl font-extrabold mb-6 leading-tight max-w-4xl mx-auto max-sm:text-2xl">
           <EditableText
             value={data.headline}
-            onChange={(v) => onUpdateData({ headline: v })}
+            onChange={onUpdateData ? (v) => onUpdateData({ headline: v }) : undefined}
             multiline
           />
         </h2>
         <div className="text-gray-400 text-lg mb-10 max-w-2xl mx-auto leading-relaxed max-sm:text-sm">
           <EditableText
             value={data.subtext}
-            onChange={(v) => onUpdateData({ subtext: v })}
+            onChange={onUpdateData ? (v) => onUpdateData({ subtext: v }) : undefined}
             multiline
           />
         </div>

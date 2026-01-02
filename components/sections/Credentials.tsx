@@ -10,8 +10,8 @@ interface CredentialsProps {
   brandColor: string;
   industry: string;
   location: string;
-  onUpdateData: (newData: Partial<GeneratedWebsite['credentials']>) => void;
-  onUpdateImage: (newBase64: string) => void;
+  onUpdateData?: (newData: Partial<GeneratedWebsite['credentials']>) => void;
+  onUpdateImage?: (newBase64: string) => void;
 }
 
 const Credentials: React.FC<CredentialsProps> = ({ data, image, brandColor, industry, location, onUpdateData, onUpdateImage }) => {
@@ -31,20 +31,20 @@ const Credentials: React.FC<CredentialsProps> = ({ data, image, brandColor, indu
             <span style={{ color: brandColor }} className="font-bold text-sm tracking-widest uppercase mb-4 block max-sm:text-xs">
               <EditableText
                 value={data.badge}
-                onChange={(v) => onUpdateData({ badge: v })}
+                onChange={onUpdateData ? (v) => onUpdateData({ badge: v }) : undefined}
               />
             </span>
             <h2 className="text-[#1A1D2E] text-4xl font-extrabold mb-6 leading-tight max-sm:text-3xl max-sm:mb-4">
               <EditableText
                 value={data.headline}
-                onChange={(v) => onUpdateData({ headline: v })}
+                onChange={onUpdateData ? (v) => onUpdateData({ headline: v }) : undefined}
                 multiline
               />
             </h2>
             <div className="text-gray-600 mb-8 leading-relaxed text-lg max-sm:text-base max-sm:mb-6">
               <EditableText
                 value={data.description}
-                onChange={(v) => onUpdateData({ description: v })}
+                onChange={onUpdateData ? (v) => onUpdateData({ description: v }) : undefined}
                 multiline
               />
             </div>
@@ -58,11 +58,11 @@ const Credentials: React.FC<CredentialsProps> = ({ data, image, brandColor, indu
                   <div className="text-gray-700 font-bold text-base tracking-tight uppercase max-sm:text-xs">
                     <EditableText
                       value={item}
-                      onChange={(v) => {
+                      onChange={onUpdateData ? (v) => {
                         const next = [...data.items];
                         next[idx] = v;
                         onUpdateData({ items: next });
-                      }}
+                      } : undefined}
                     />
                   </div>
                 </div>
@@ -80,7 +80,7 @@ const Credentials: React.FC<CredentialsProps> = ({ data, image, brandColor, indu
               <div className="text-[#1A1D2E] text-xs font-black uppercase tracking-widest text-center sm:text-left flex-1 leading-relaxed">
                 <EditableText
                   value={data.certificationText}
-                  onChange={(v) => onUpdateData({ certificationText: v })}
+                  onChange={onUpdateData ? (v) => onUpdateData({ certificationText: v }) : undefined}
                   multiline
                 />
               </div>

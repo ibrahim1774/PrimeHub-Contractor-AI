@@ -7,7 +7,7 @@ interface BenefitsListProps {
   data: GeneratedWebsite['benefits'];
   brandColor: string;
   companyName: string;
-  onUpdateData: (newData: Partial<GeneratedWebsite['benefits']>) => void;
+  onUpdateData?: (newData: Partial<GeneratedWebsite['benefits']>) => void;
 }
 
 const BenefitsList: React.FC<BenefitsListProps> = ({ data, brandColor, companyName, onUpdateData }) => {
@@ -20,7 +20,7 @@ const BenefitsList: React.FC<BenefitsListProps> = ({ data, brandColor, companyNa
         <div className="text-gray-500 font-medium mb-16 max-w-3xl mx-auto max-sm:text-sm max-sm:mb-10">
           <EditableText
             value={data.intro}
-            onChange={(v) => onUpdateData({ intro: v })}
+            onChange={onUpdateData ? (v) => onUpdateData({ intro: v }) : undefined}
             multiline
           />
         </div>
@@ -37,11 +37,11 @@ const BenefitsList: React.FC<BenefitsListProps> = ({ data, brandColor, companyNa
               <div className="text-gray-800 font-bold text-lg leading-snug tracking-tight max-sm:text-base">
                 <EditableText
                   value={benefit}
-                  onChange={(v) => {
+                  onChange={onUpdateData ? (v) => {
                     const next = [...data.items];
                     next[idx] = v;
                     onUpdateData({ items: next });
-                  }}
+                  } : undefined}
                   multiline
                 />
               </div>

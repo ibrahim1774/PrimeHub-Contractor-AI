@@ -7,7 +7,7 @@ interface ServicesProps {
   data: GeneratedWebsite['services'];
   brandColor: string;
   phone: string;
-  onUpdateData: (newData: Partial<GeneratedWebsite['services']>) => void;
+  onUpdateData?: (newData: Partial<GeneratedWebsite['services']>) => void;
 }
 
 const Services: React.FC<ServicesProps> = ({ data, brandColor, phone, onUpdateData }) => {
@@ -17,19 +17,19 @@ const Services: React.FC<ServicesProps> = ({ data, brandColor, phone, onUpdateDa
         <span style={{ color: brandColor }} className="font-bold text-[10px] tracking-[0.4em] uppercase mb-4 block">
           <EditableText
             value={data.badge}
-            onChange={(v) => onUpdateData({ badge: v })}
+            onChange={onUpdateData ? (v) => onUpdateData({ badge: v }) : undefined}
           />
         </span>
         <h2 className="text-[#1A1D2E] text-4xl font-extrabold mb-4 max-sm:text-2xl">
           <EditableText
             value={data.title}
-            onChange={(v) => onUpdateData({ title: v })}
+            onChange={onUpdateData ? (v) => onUpdateData({ title: v }) : undefined}
           />
         </h2>
         <div className="text-gray-500 font-medium max-w-2xl mx-auto mb-16 max-sm:mb-8 max-sm:text-sm">
           <EditableText
             value={data.subtitle}
-            onChange={(v) => onUpdateData({ subtitle: v })}
+            onChange={onUpdateData ? (v) => onUpdateData({ subtitle: v }) : undefined}
             multiline
           />
         </div>
@@ -43,21 +43,21 @@ const Services: React.FC<ServicesProps> = ({ data, brandColor, phone, onUpdateDa
               <h3 className="text-xl font-bold mb-4 text-[#1A1D2E] leading-tight max-sm:text-lg">
                 <EditableText
                   value={service.title}
-                  onChange={(v) => {
+                  onChange={onUpdateData ? (v) => {
                     const next = [...data.cards];
                     next[idx] = { ...service, title: v };
                     onUpdateData({ cards: next });
-                  }}
+                  } : undefined}
                 />
               </h3>
               <div className="text-gray-600 mb-8 text-sm leading-relaxed flex-1">
                 <EditableText
                   value={service.description}
-                  onChange={(v) => {
+                  onChange={onUpdateData ? (v) => {
                     const next = [...data.cards];
                     next[idx] = { ...service, description: v };
                     onUpdateData({ cards: next });
-                  }}
+                  } : undefined}
                   multiline
                 />
               </div>

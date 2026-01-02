@@ -6,7 +6,7 @@ import EditableText from '../EditableText';
 interface ProcessProps {
   data: GeneratedWebsite['processSteps'];
   brandColor: string;
-  onUpdateData: (newData: Partial<GeneratedWebsite['processSteps']>) => void;
+  onUpdateData?: (newData: Partial<GeneratedWebsite['processSteps']>) => void;
 }
 
 const Process: React.FC<ProcessProps> = ({ data, brandColor, onUpdateData }) => {
@@ -19,13 +19,13 @@ const Process: React.FC<ProcessProps> = ({ data, brandColor, onUpdateData }) => 
         <h2 className="text-4xl font-extrabold mb-4">
           <EditableText
             value={data.title}
-            onChange={(v) => onUpdateData({ title: v })}
+            onChange={onUpdateData ? (v) => onUpdateData({ title: v }) : undefined}
           />
         </h2>
         <div className="text-gray-400 max-w-2xl mx-auto mb-20 text-sm">
           <EditableText
             value={data.subtitle}
-            onChange={(v) => onUpdateData({ subtitle: v })}
+            onChange={onUpdateData ? (v) => onUpdateData({ subtitle: v }) : undefined}
             multiline
           />
         </div>
@@ -47,21 +47,21 @@ const Process: React.FC<ProcessProps> = ({ data, brandColor, onUpdateData }) => 
               <h3 className="text-xl font-bold mb-4 relative z-10">
                 <EditableText
                   value={step.title}
-                  onChange={(v) => {
+                  onChange={onUpdateData ? (v) => {
                     const next = [...data.steps];
                     next[idx] = { ...step, title: v };
                     onUpdateData({ steps: next });
-                  }}
+                  } : undefined}
                 />
               </h3>
               <div className="text-gray-400 text-xs leading-relaxed max-w-[240px] relative z-10 mx-auto">
                 <EditableText
                   value={step.description}
-                  onChange={(v) => {
+                  onChange={onUpdateData ? (v) => {
                     const next = [...data.steps];
                     next[idx] = { ...step, description: v };
                     onUpdateData({ steps: next });
-                  }}
+                  } : undefined}
                   multiline
                 />
               </div>
