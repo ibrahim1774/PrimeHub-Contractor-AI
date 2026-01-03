@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { GeneratedWebsite, GeneratedImages } from '../types';
 import Hero from './sections/Hero';
 import Services from './sections/Services';
@@ -146,6 +146,18 @@ const PreviewSite: React.FC<PreviewSiteProps> = ({ data: initialData, images: in
   // Editable state
   const [data, setData] = useState<GeneratedWebsite>(initialData);
   const [images, setImages] = useState<GeneratedImages>(initialImages);
+  const bannerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const updateBannerHeight = () => {
+      if (bannerRef.current) {
+        document.documentElement.style.setProperty('--banner-height', `${bannerRef.current.offsetHeight}px`);
+      }
+    };
+    updateBannerHeight();
+    window.addEventListener('resize', updateBannerHeight);
+    return () => window.removeEventListener('resize', updateBannerHeight);
+  }, []);
 
   const updateData = (newData: Partial<GeneratedWebsite>) => {
     setData(prev => ({ ...prev, ...newData }));
@@ -359,7 +371,7 @@ const PreviewSite: React.FC<PreviewSiteProps> = ({ data: initialData, images: in
   const formattedPhone = data.phone || "(555) 123-4567";
 
   return (
-    <div className="bg-white min-h-screen relative font-inter overflow-x-hidden max-sm:text-[85%]">
+    <div className="bg-white min-h-screen relative font-inter max-sm:text-[85%]">
       <style>{`
         section {
           padding-top: 4.6rem !important; 
@@ -375,14 +387,20 @@ const PreviewSite: React.FC<PreviewSiteProps> = ({ data: initialData, images: in
       `}</style>
 
       {/* Sticky Editing Banner */}
-      <div className="sticky top-0 z-[60] bg-red-600 text-white py-3 px-4 text-center font-bold text-sm md:text-base shadow-lg transition-all">
+      <div
+        ref={bannerRef}
+        className="fixed top-0 left-0 w-full z-[70] bg-red-600 text-white py-3 px-4 text-center font-bold text-sm md:text-base shadow-lg transition-all"
+      >
         <p className="max-w-4xl mx-auto leading-tight">
           You can edit text or replace images by clicking on it. Changes save automatically.
         </p>
       </div>
 
+      {/* Spacer to push content down below fixed banner */}
+      <div style={{ height: 'var(--banner-height, 0px)' }} />
+
       {/* Site Navigation */}
-      <div className="bg-white border-b border-gray-100 py-3 md:py-4 px-4 md:px-6 flex items-center justify-between sticky top-[var(--banner-height,0)] z-50 shadow-sm transition-all">
+      <div className="bg-white border-b border-gray-100 py-3 md:py-4 px-4 md:px-6 flex items-center justify-between sticky top-[var(--banner-height,0px)] z-50 shadow-sm transition-all">
         <div className="flex flex-col">
           <span className="font-black tracking-tighter text-base md:text-lg uppercase leading-none text-[#1A1D2E] max-sm:text-sm">
             <EditableText
