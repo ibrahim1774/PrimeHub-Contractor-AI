@@ -375,9 +375,9 @@ const PreviewSite: React.FC<PreviewSiteProps> = ({ data: initialData, images: in
       `}</style>
 
       {/* Sticky Editing Banner */}
-      <div className="sticky top-0 z-[60] bg-red-600 text-white py-3 px-4 text-center font-bold text-sm md:text-base shadow-lg transition-all animate-pulse">
+      <div className="sticky top-0 z-[60] bg-red-600 text-white py-3 px-4 text-center font-bold text-sm md:text-base shadow-lg transition-all">
         <p className="max-w-4xl mx-auto leading-tight">
-          Text and images can be edited. Once ready, click <span className="underline uppercase tracking-wider">Launch Website</span> to start $20/month website hosting and launch your site.
+          You can edit text or replace images by clicking on it. Changes save automatically.
         </p>
       </div>
 
