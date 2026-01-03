@@ -78,7 +78,7 @@ export const useWebsiteGenerator = () => {
         return `https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&q=80&w=1200`; // High-quality generic construction/service default
       };
 
-      // Fire all requests at once
+      // Fire all requests at once (Text + Smart Image Queries)
       const contentPromise = generateWebsiteContent(
         formData.industry,
         formData.companyName,
@@ -87,16 +87,26 @@ export const useWebsiteGenerator = () => {
         formData.brandColor
       );
 
-      const heroImgPromise = searchUnsplashImage(`${formData.industry} contractor home service`, "landscape");
-      const valueImgPromise = searchUnsplashImage(`${formData.industry} repair tools professional`, "landscape");
-      const credImgPromise = searchUnsplashImage(`${formData.industry} professional service technician`, "landscape");
+      // Smart Image Intent Strategy
+      const heroImgPromise = searchUnsplashImage(`${formData.industry} professional technician working`, "landscape");
+      const valueImgPromise = searchUnsplashImage(`${formData.industry} home service repair`, "landscape");
+      const credImgPromise = searchUnsplashImage(`${formData.industry} contractor team professional`, "landscape");
+
+      // Inject images into the "Our Work" gallery
+      const galleryPromises = [
+        searchUnsplashImage(`${formData.industry} service project`, "landscape"),
+        searchUnsplashImage(`${formData.industry} installation work`, "landscape"),
+        searchUnsplashImage(`${formData.industry} maintenance result`, "landscape"),
+        searchUnsplashImage(`${formData.industry} contractor site`, "landscape"),
+      ];
 
       // Wait for everything to finish concurrently
-      const [content, heroImg, valueImg, credImg] = await Promise.all([
+      const [content, heroImg, valueImg, credImg, ...galleryImgs] = await Promise.all([
         contentPromise,
         heroImgPromise,
         valueImgPromise,
-        credImgPromise
+        credImgPromise,
+        ...galleryPromises
       ]);
 
       targetProgress.current = 80;
@@ -106,7 +116,7 @@ export const useWebsiteGenerator = () => {
         heroBackground: heroImg || getFallback('hero'),
         industryValue: valueImg || getFallback('value'),
         credentialsShowcase: credImg || getFallback('cred'),
-        ourWorkImages: [null, null, null, null],
+        ourWorkImages: (galleryImgs.length === 4 ? galleryImgs : [null, null, null, null]) as [string | null, string | null, string | null, string | null],
       });
 
       console.log("[Generator] Synthesis complete.");
