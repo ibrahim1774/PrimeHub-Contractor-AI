@@ -102,7 +102,7 @@ export default async function handler(req: any, res: any) {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (domainRes.ok) {
-                const domainData = await domainRes.ok ? await domainRes.json() : null;
+                const domainData = await domainRes.json();
                 if (domainData && domainData.domains && domainData.domains.length > 0) {
                     // Find the primary domain or just use the first one
                     const primary = domainData.domains.find((d: any) => d.main) || domainData.domains[0];

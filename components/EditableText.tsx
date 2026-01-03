@@ -2,7 +2,7 @@ import React from 'react';
 
 interface EditableTextProps {
     value: string;
-    onChange: (newValue: string) => void;
+    onChange?: (newValue: string) => void;
     className?: string;
     multiline?: boolean;
 }
