@@ -87,9 +87,9 @@ export const useWebsiteGenerator = () => {
         formData.brandColor
       );
 
-      const heroImgPromise = searchUnsplashImage(`${formData.industry} professional work`, "landscape");
-      const valueImgPromise = searchUnsplashImage(`${formData.industry} technician service`, "landscape");
-      const credImgPromise = searchUnsplashImage(`${formData.industry} industrial site`, "landscape");
+      const heroImgPromise = searchUnsplashImage(`${formData.industry} contractor home service`, "landscape");
+      const valueImgPromise = searchUnsplashImage(`${formData.industry} repair tools professional`, "landscape");
+      const credImgPromise = searchUnsplashImage(`${formData.industry} professional service technician`, "landscape");
 
       // Wait for everything to finish concurrently
       const [content, heroImg, valueImg, credImg] = await Promise.all([
