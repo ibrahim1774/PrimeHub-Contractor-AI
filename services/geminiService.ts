@@ -22,10 +22,6 @@ const getPixabayKey = () => {
   return process.env.PIXABAY_API_KEY || "YOUR_PIXABAY_KEY_HERE";
 };
 
-const getOpenAIKey = () => {
-  return process.env.OPENAI_API_KEY || "YOUR_OPENAI_API_KEY_HERE";
-};
-
 const getGoogleConfig = () => {
   return {
     apiKey: process.env.GOOGLE_SEARCH_API_KEY || "YOUR_GOOGLE_API_KEY_HERE",
@@ -280,33 +276,26 @@ export const generateImage = async (prompt: string, aspectRatio: "1:1" | "16:9" 
 };
 
 export const generateOpenAIImage = async (prompt: string): Promise<string> => {
-  const apiKey = getOpenAIKey();
-  console.log(`[OpenAI] Generating image for: "${prompt}"`);
+  console.log(`[Proxy] Requesting image via backend: "${prompt}"`);
 
   try {
-    const response = await fetch("https://api.openai.com/v1/images/generations", {
+    const response = await fetch("/api/ai-image", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        model: "dall-e-2",
-        prompt: `${prompt}. ${Math.random().toString(36).substring(7)}. Photorealistic, professional contractor photography. Natural lighting, real job site environment. No text, no logos.`,
-        n: 1,
-        size: "1024x1024"
-      })
+      body: JSON.stringify({ prompt })
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(`OpenAI API error: ${errorData.error?.message || response.statusText}`);
+      throw new Error(errorData.error || `Proxy error: ${response.statusText}`);
     }
 
     const data = await response.json();
-    return data.data[0].url;
+    return data.url;
   } catch (error) {
-    console.error("[OpenAI Error]:", error);
+    console.error("[Proxy Error]:", error);
     return "";
   }
 };
