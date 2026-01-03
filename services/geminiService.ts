@@ -275,30 +275,7 @@ export const generateImage = async (prompt: string, aspectRatio: "1:1" | "16:9" 
   }
 };
 
-export const generateOpenAIImage = async (prompt: string): Promise<string> => {
-  console.log(`[Proxy] Requesting image via backend: "${prompt}"`);
 
-  try {
-    const response = await fetch("/api/ai-image", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ prompt })
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || `Proxy error: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    return data.url;
-  } catch (error) {
-    console.error("[Proxy Error]:", error);
-    return "";
-  }
-};
 
 export const searchUnsplashImages = async (
   query: string,

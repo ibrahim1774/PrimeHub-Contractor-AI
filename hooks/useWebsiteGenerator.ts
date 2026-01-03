@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { FormData, GeneratedWebsite, GeneratedImages } from '../types';
-import { generateWebsiteContent, generateImage, generateOpenAIImage, searchUnsplashImages, searchPixabayImages } from '../services/geminiService';
+import { generateWebsiteContent, generateImage, searchUnsplashImages, searchPixabayImages } from '../services/geminiService';
 
 const LOADING_MESSAGES = [
   "Initializing project structure...",
@@ -87,12 +87,12 @@ export const useWebsiteGenerator = () => {
         formData.brandColor
       );
 
-      // OpenAI DALL-E Strategy (Primary for High Relevance) with Distinct Compositions
-      const heroGenPromise = generateOpenAIImage(`Wide angle hero shot, ${formData.industry} professional team standing proudly in front of a completed project site, bright daylight`);
-      const valueGenPromise = generateOpenAIImage(`Extreme close-up macro shot, hands of a ${formData.industry} technician using specialized tools for detailed repair work, high focus`);
-      const credGenPromise = generateOpenAIImage(`Medium shot, friendly ${formData.industry} contractor in professional uniform and safety gear smiling at the camera, residential background`);
+      // Gemini 2.5 Strategy (Parallel Generation for Maximum Speed)
+      const heroGenPromise = generateImage(`Wide angle hero shot of ${formData.industry} professional team on site, daylight`, "16:9");
+      const valueGenPromise = generateImage(`Close-up of ${formData.industry} technician working with specialized tools`, "4:3");
+      const credGenPromise = generateImage(`Professional ${formData.industry} contractor in uniform and safety gear smiling`, "3:4");
 
-      // Wait for content and OpenAI images
+      // Wait for content and Gemini images
       const [content, heroUrl, valueUrl, credUrl] = await Promise.all([
         contentPromise,
         heroGenPromise,
@@ -104,13 +104,13 @@ export const useWebsiteGenerator = () => {
       const usedUrls = new Set<string>();
 
       const resolveWithFallback = async (primaryUrl: string, query: string, fallbackType: 'hero' | 'value' | 'cred') => {
-        // 1. If OpenAI succeeded and is unique, use it
+        // 1. If Gemini succeeded and is unique, use it
         if (primaryUrl && !usedUrls.has(primaryUrl)) {
           usedUrls.add(primaryUrl);
           return primaryUrl;
         }
 
-        console.warn(`[Generator] OpenAI fallback or duplicate for ${fallbackType}, searching alternatives...`);
+        console.warn(`[Generator] Gemini fallback or duplicate for ${fallbackType}, searching alternatives...`);
 
         // 2. Try Pixabay search (fetch 5 to ensure we find a unique one)
         const pixabayHits = await searchPixabayImages(query, "landscape", 5);
