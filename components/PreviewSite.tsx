@@ -115,11 +115,13 @@ const SiteContent: React.FC<{ data: GeneratedWebsite; images: GeneratedImages }>
           location={data.location}
         />
 
-        <OurWork
-          data={data.ourWork}
-          images={images.ourWorkImages}
-          brandColor={data.brandColor}
-        />
+        {data.ourWork && (
+          <OurWork
+            data={data.ourWork}
+            images={images.ourWorkImages}
+            brandColor={data.brandColor}
+          />
+        )}
 
         <FAQ faqs={data.faqs} brandColor={data.brandColor} />
       </main>
@@ -466,13 +468,15 @@ const PreviewSite: React.FC<PreviewSiteProps> = ({ data: initialData, images: in
           onUpdateImage={(v) => setImages(prev => ({ ...prev, credentialsShowcase: v }))}
         />
 
-        <OurWork
-          data={data.ourWork}
-          images={images.ourWorkImages}
-          brandColor={data.brandColor}
-          onUpdateData={(d) => updateData({ ourWork: { ...data.ourWork, ...d } })}
-          onUpdateImages={(v) => setImages(prev => ({ ...prev, ourWorkImages: v }))}
-        />
+        {data.ourWork && (
+          <OurWork
+            data={data.ourWork}
+            images={images.ourWorkImages}
+            brandColor={data.brandColor}
+            onUpdateData={(d) => updateData({ ourWork: { ...data.ourWork!, ...d } })}
+            onUpdateImages={(v) => setImages(prev => ({ ...prev, ourWorkImages: v }))}
+          />
+        )}
 
         <FAQ
           faqs={data.faqs}

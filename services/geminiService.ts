@@ -50,8 +50,7 @@ export const generateWebsiteContent = async (industry: string, companyName: stri
      - Estimates (How do your estimates work?)
      - Service Area (Where do you work?)
      - Satisfaction Guarantee (What if I'm not happy with the work?)
-  8. Our Work Section: Generate title as "Our Work" and subtitle as "Real photos from our recent projects in ${location}."
-  9. Provide 4 unique CTA variations. 
+  8. Provide 4 unique CTA variations. 
      CRITICAL: DO NOT include the phone number ${phone} in these text strings. 
      Only provide the action phrase (e.g., "Request a Quote", "Get an Estimate", "Speak With Our Team", "Call & Text").
      The application will append the phone number to these phrases automatically.
@@ -182,14 +181,7 @@ export const generateWebsiteContent = async (industry: string, companyName: stri
               minItems: 4,
               maxItems: 4
             },
-            ourWork: {
-              type: Type.OBJECT,
-              properties: {
-                title: { type: Type.STRING },
-                subtitle: { type: Type.STRING }
-              },
-              required: ["title", "subtitle"]
-            },
+
             emergencyCTA: {
               type: Type.OBJECT,
               properties: { headline: { type: Type.STRING }, subtext: { type: Type.STRING }, buttonText: { type: Type.STRING } },
@@ -217,7 +209,7 @@ export const generateWebsiteContent = async (industry: string, companyName: stri
               required: ["requestQuote", "getEstimate", "speakWithTeam", "callAndText"]
             }
           },
-          required: ["companyName", "brandColor", "industry", "location", "phone", "hero", "services", "industryValue", "featureHighlight", "benefits", "processSteps", "ourWork", "faqs", "emergencyCTA", "credentials", "ctaVariations"]
+          required: ["companyName", "brandColor", "industry", "location", "phone", "hero", "services", "industryValue", "featureHighlight", "benefits", "processSteps", "faqs", "emergencyCTA", "credentials", "ctaVariations"]
         }
       }
     });

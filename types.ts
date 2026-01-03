@@ -58,7 +58,7 @@ export interface GeneratedWebsite {
       icon: string;
     }>;
   };
-  ourWork: {
+  ourWork?: {
     title: string;
     subtitle: string;
   };
