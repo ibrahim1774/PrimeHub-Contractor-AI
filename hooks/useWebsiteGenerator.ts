@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { FormData, GeneratedWebsite, GeneratedImages } from '../types';
-import { generateWebsiteContent, generateImage } from '../services/geminiService';
+import { generateWebsiteContent, generateImage, searchUnsplashImage } from '../services/geminiService';
 
 const LOADING_MESSAGES = [
   "Initializing project structure...",
@@ -87,20 +87,9 @@ export const useWebsiteGenerator = () => {
         formData.brandColor
       );
 
-      const heroImgPromise = generateImage(
-        `Candid high-end professional photography of ${formData.industry} technicians at a project site in ${formData.serviceArea}, 16:9`,
-        "16:9"
-      );
-
-      const valueImgPromise = generateImage(
-        `Action shot of a professional ${formData.industry} technician performing an inspection or repair, cinematic lighting, 4:3`,
-        "4:3"
-      );
-
-      const credImgPromise = generateImage(
-        `Professional ${formData.industry} service team with vehicle, daylight, high-quality photorealistic 16:9`,
-        "16:9"
-      );
+      const heroImgPromise = searchUnsplashImage(`${formData.industry} professional work`, "landscape");
+      const valueImgPromise = searchUnsplashImage(`${formData.industry} technician service`, "landscape");
+      const credImgPromise = searchUnsplashImage(`${formData.industry} industrial site`, "landscape");
 
       // Wait for everything to finish concurrently
       const [content, heroImg, valueImg, credImg] = await Promise.all([

@@ -14,6 +14,10 @@ const getAI = () => {
   return new GoogleGenAI({ apiKey });
 };
 
+const getUnsplashKey = () => {
+  return process.env.UNSPLASH_ACCESS_KEY || "3JabxFut430D5h-XZmnhE4eMhGHgDfiD_IuqtoSfWZo";
+};
+
 /**
  * Robustly extracts and parses JSON from a model response, 
  * handling potential markdown code blocks or extra text.
@@ -248,5 +252,26 @@ export const generateImage = async (prompt: string, aspectRatio: "1:1" | "16:9" 
   } catch (error: any) {
     console.warn("[Synthesis Warning] Image failure, returning null for fallback:", error);
     return ""; // Return empty string to trigger fallback in the hook
+  }
+};
+
+export const searchUnsplashImage = async (query: string, orientation: "landscape" | "portrait" | "squarish" = "landscape"): Promise<string> => {
+  const apiKey = getUnsplashKey();
+  console.log(`[Unsplash] Searching for: ${query}`);
+
+  try {
+    const response = await fetch(
+      `https://api.unsplash.com/photos/random?query=${encodeURIComponent(query)}&orientation=${orientation}&client_id=${apiKey}`
+    );
+
+    if (!response.ok) {
+      throw new Error(`Unsplash API error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.urls.regular;
+  } catch (error) {
+    console.error("[Unsplash Error]:", error);
+    return "";
   }
 };
