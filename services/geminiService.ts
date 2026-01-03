@@ -18,6 +18,10 @@ const getUnsplashKey = () => {
   return process.env.UNSPLASH_ACCESS_KEY || "3JabxFut430D5h-XZmnhE4eMhGHgDfiD_IuqtoSfWZo";
 };
 
+const getPixabayKey = () => {
+  return process.env.PIXABAY_API_KEY || "4175281-b81ce7d692224f774bbf08c4a";
+};
+
 const getGoogleConfig = () => {
   return {
     apiKey: process.env.GOOGLE_SEARCH_API_KEY || "AIzaSyDSUTwE7I5zF9_HThtH6ygfT076nM531U4",
@@ -424,6 +428,64 @@ export const searchGoogleImages = async (
 
   } catch (error) {
     console.error("[Google Search Error]:", error);
+    return [];
+  }
+};
+export const searchPixabayImages = async (
+  query: string,
+  orientation: "landscape" | "portrait" = "landscape",
+  count: number = 1,
+  excludeUrls: string[] = []
+): Promise<{ url: string; id: string }[]> => {
+  const apiKey = getPixabayKey();
+  const pixabayOrientation = orientation === "landscape" ? "horizontal" : "vertical";
+  console.log(`[Pixabay] Human-like search for: "${query}" (Target: ${count} images)`);
+
+  const url = `https://pixabay.com/api/?key=${apiKey}&q=${encodeURIComponent(query)}&image_type=photo&orientation=${pixabayOrientation}&safesearch=true&per_page=30`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Pixabay API error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    const hits = data.hits || [];
+
+    if (hits.length === 0) return [];
+
+    // Scoring Logic (Similar to Unsplash framework)
+    const scoredResults = hits.map((img: any, index: number) => {
+      let score = 0;
+      const tags = (img.tags || "").toLowerCase();
+
+      // Relevance Ranking
+      if (index < 8) score += 10;
+
+      const primaryQuery = query.split(" ")[0].toLowerCase();
+      if (tags.includes(primaryQuery)) score += 5;
+
+      const actionKeywords = ["work", "technician", "tools", "repair", "service", "contractor", "crew", "project"];
+      if (actionKeywords.some(k => tags.includes(k))) score += 3;
+
+      // Penalize non-professional vibes
+      const cartoonKeywords = ["illustration", "vector", "drawing", "cartoon", "graphic"];
+      if (cartoonKeywords.some(k => tags.includes(k))) score -= 20;
+
+      return { img, score };
+    });
+
+    const filtered = scoredResults
+      .filter((item: any) => !excludeUrls.includes(item.img.largeImageURL) && item.score > 0)
+      .sort((a: any, b: any) => b.score - a.score);
+
+    return filtered.slice(0, count).map((item: any) => ({
+      url: item.img.largeImageURL,
+      id: String(item.img.id)
+    }));
+
+  } catch (error) {
+    console.error("[Pixabay Error]:", error);
     return [];
   }
 };
